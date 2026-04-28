@@ -1,0 +1,97 @@
+name: "Fast Forward Test Suite"
+
+on:
+  push:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+  workflow_dispatch:
+    inputs:
+      max-outdated:
+        description: Maximum number of outdated packages allowed by the dependencies command.
+        required: false
+        type: number
+        default: -1
+      min-coverage:
+        description: Minimum line coverage percentage enforced by dev-tools tests.
+        required: false
+        type: number
+        default: 0
+      publish-required-statuses:
+        description: Mirror required test matrix checks as commit statuses for workflow-dispatched runs.
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  tests:
+    name: Run Tests (${{ matrix.php-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - "8.3"
+          - "8.4"
+          - "8.5"
+    env:
+      COMPOSER_ROOT_VERSION: ${{ github.event_name == 'pull_request' && format('dev-{0}', github.event.pull_request.head.ref) || 'dev-main' }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: pcov, pcntl
+          coverage: pcov
+
+      - name: Install global dev-tools
+        run: |
+          composer global config --no-plugins allow-plugins.ergebnis/composer-normalize true
+          composer global config --no-plugins allow-plugins.fast-forward/dev-tools true
+          composer global config --no-plugins allow-plugins.phpdocumentor/shim true
+          composer global config --no-plugins allow-plugins.phpro/grumphp-shim true
+          composer global config --no-plugins allow-plugins.pyrech/composer-changelogs true
+          composer global require fast-forward/dev-tools:dev-main --with-all-dependencies --no-progress --no-interaction
+          composer global config --no-plugins allow-plugins.fast-forward/dev-tools false
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Validate composer metadata
+        run: composer validate --strict
+
+      - name: Run PHPUnit tests
+        run: composer dev-tools tests -- --coverage=.dev-tools/coverage --min-coverage=${{ inputs.min-coverage || 0 }}
+
+      - name: Publish required test status
+        if: ${{ always() && inputs.publish-required-statuses }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_SHA: ${{ github.sha }}
+          TARGET_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          TEST_CONTEXT: Run Tests (${{ matrix.php-version }})
+          TEST_RESULT: ${{ job.status }}
+        run: |
+          if [ "${TEST_RESULT}" = "success" ]; then
+            state="success"
+            description="Workflow-dispatched PHPUnit job passed."
+          else
+            state="failure"
+            description="Workflow-dispatched PHPUnit job result: ${TEST_RESULT}."
+          fi
+
+          gh api \
+            --method POST \
+            "repos/${GITHUB_REPOSITORY}/statuses/${TARGET_SHA}" \
+            -f state="${state}" \
+            -f context="${TEST_CONTEXT}" \
+            -f description="${description}" \
+            -f target_url="${TARGET_URL}"

@@ -1,0 +1,16 @@
+name: "Fast Forward Wiki Update"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    name: Wiki Preview
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wiki preview deferred
+        run: |
+          echo "Wiki preview publication is deferred until fast-forward/dev-tools can run its bundled toolchain globally."

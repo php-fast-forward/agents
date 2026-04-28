@@ -1,0 +1,16 @@
+name: "Fast Forward Reports"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reports:
+    name: Reports
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reports deferred
+        run: |
+          echo "Report publication is deferred until fast-forward/dev-tools can run its bundled toolchain globally."
