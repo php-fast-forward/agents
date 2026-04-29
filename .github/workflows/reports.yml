@@ -23,7 +23,6 @@ jobs:
   reports:
     uses: php-fast-forward/.github/.github/workflows/reports.yml@task/2-extract-shared-workflows
     with:
-      automation-ref: task/2-extract-shared-workflows
       cleanup-previews: ${{ github.event_name == 'workflow_dispatch' && inputs.cleanup-previews || false }}
       dev-tools-version: ^1.0
     secrets: inherit

@@ -31,7 +31,6 @@ jobs:
   auto-resolve-conflicts:
     uses: php-fast-forward/.github/.github/workflows/auto-resolve-conflicts.yml@task/2-extract-shared-workflows
     with:
-      automation-ref: task/2-extract-shared-workflows
       base-ref: ${{ inputs.base-ref || github.event.pull_request.base.ref || github.event.repository.default_branch || 'main' }}
       pull-request-number: ${{ inputs.pull-request-number || github.event.pull_request.number || '' }}
     secrets: inherit

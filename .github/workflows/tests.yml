@@ -23,6 +23,5 @@ jobs:
   tests:
     uses: php-fast-forward/.github/.github/workflows/tests.yml@task/2-extract-shared-workflows
     with:
-      automation-ref: task/2-extract-shared-workflows
       dev-tools-version: ^1.0
       publish-required-statuses: ${{ github.event_name == 'workflow_dispatch' && inputs.publish-required-statuses || false }}

@@ -29,7 +29,6 @@ jobs:
   changelog:
     uses: php-fast-forward/.github/.github/workflows/changelog.yml@task/2-extract-shared-workflows
     with:
-      automation-ref: task/2-extract-shared-workflows
       changelog-file: ${{ inputs.changelog-file || 'CHANGELOG.md' }}
       dev-tools-version: ^1.0
       version: ${{ inputs.version || '' }}
