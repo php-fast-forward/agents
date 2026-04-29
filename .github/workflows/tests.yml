@@ -9,16 +9,6 @@ on:
       - reopened
   workflow_dispatch:
     inputs:
-      max-outdated:
-        description: Maximum number of outdated packages allowed by the dependencies command.
-        required: false
-        type: number
-        default: -1
-      min-coverage:
-        description: Minimum line coverage percentage enforced by dev-tools tests.
-        required: false
-        type: number
-        default: 0
       publish-required-statuses:
         description: Mirror required test matrix checks as commit statuses for workflow-dispatched runs.
         required: false
@@ -49,18 +39,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          extensions: pcov, pcntl
-          coverage: pcov
-
-      - name: Install global dev-tools
-        run: |
-          composer global config --no-plugins allow-plugins.ergebnis/composer-normalize true
-          composer global config --no-plugins allow-plugins.fast-forward/dev-tools true
-          composer global config --no-plugins allow-plugins.phpdocumentor/shim true
-          composer global config --no-plugins allow-plugins.phpro/grumphp-shim true
-          composer global config --no-plugins allow-plugins.pyrech/composer-changelogs true
-          composer global require fast-forward/dev-tools:dev-main --with-all-dependencies --no-progress --no-interaction
-          composer global config --no-plugins allow-plugins.fast-forward/dev-tools false
+          coverage: none
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
@@ -68,8 +47,13 @@ jobs:
       - name: Validate composer metadata
         run: composer validate --strict
 
-      - name: Run PHPUnit tests
-        run: composer dev-tools tests -- --coverage=.dev-tools/coverage --min-coverage=${{ inputs.min-coverage || 0 }}
+      - name: Validate packaged payload
+        run: |
+          test -d .agents/agents
+          test -d .agents/skills
+          test -f .agents/agents/issue-implementer.md
+          test -f .agents/skills/github-pull-request/SKILL.md
+          php -r '$composer = json_decode(file_get_contents("composer.json"), true, flags: JSON_THROW_ON_ERROR); if (($composer["type"] ?? null) !== "fast-forward-resource-bundle") { exit(1); } if (($composer["extra"]["installer-name"] ?? null) !== "agents") { exit(1); } if (($composer["extra"]["fast-forward-bundle"]["installer-path"] ?? null) !== ".agents/{\$name}/") { exit(1); }'
 
       - name: Publish required test status
         if: ${{ always() && inputs.publish-required-statuses }}
@@ -82,10 +66,10 @@ jobs:
         run: |
           if [ "${TEST_RESULT}" = "success" ]; then
             state="success"
-            description="Workflow-dispatched PHPUnit job passed."
+            description="Workflow-dispatched package validation job passed."
           else
             state="failure"
-            description="Workflow-dispatched PHPUnit job result: ${TEST_RESULT}."
+            description="Workflow-dispatched package validation job result: ${TEST_RESULT}."
           fi
 
           gh api \

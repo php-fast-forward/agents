@@ -64,12 +64,14 @@ assuming they live inside the `dev-tools` archive.
 
 - `.agents/agents/` contains project-agent prompts.
 - `.agents/skills/` contains reusable procedural skills and reference material.
-- `FastForward\Agents\AgentBundle` exposes the resource-bundle type and payload path
-  constants used by tests and future integration work.
 
 The copied payload is intentionally kept close to the current `dev-tools`
 version. Content changes should stay minimal unless they are required for the
 standalone bundle layout.
+
+The Composer metadata in `composer.json` is the package contract. This package
+does not expose a runtime PHP API yet; one can be introduced later when
+`dev-tools` has a concrete integration need.
 
 ## Development
 
@@ -87,17 +89,16 @@ composer global require fast-forward/dev-tools:dev-main
 composer global config --no-plugins allow-plugins.fast-forward/dev-tools false
 ```
 
-Validate the package metadata and payload shape:
+Validate the package metadata:
 
 ```bash
 composer validate --strict
-./vendor/bin/phpunit tests
 ```
 
-Run the global Fast Forward test wrapper before opening a PR:
+Check changelog discipline on PR branches:
 
 ```bash
-composer dev-tools tests -- --coverage=.dev-tools/coverage --min-coverage=0
+composer dev-tools changelog:check -- --file=CHANGELOG.md --against=origin/main
 ```
 
 The root package intentionally does not require `fast-forward/dev-tools` as a

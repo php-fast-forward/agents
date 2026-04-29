@@ -6,9 +6,8 @@
 It carries reusable project-agent prompts under `.agents/agents/` and procedural
 skills under `.agents/skills/`.
 
-This repository is intentionally content-first. Keep runtime PHP source limited
-to tiny metadata helpers such as `src/AgentBundle.php` unless a future issue
-explicitly expands the package contract.
+This repository is intentionally content-first. Do not add runtime PHP source
+unless a future issue explicitly expands the package contract.
 
 ## Setup Commands
 
@@ -36,10 +35,8 @@ Important paths:
 
 - `.agents/agents/` packaged role prompts for repository work.
 - `.agents/skills/` packaged procedural skills and their reference material.
-- `src/AgentBundle.php` constants for the Composer installer type and payload paths.
 - `composer.json` package metadata, custom Composer type, installer dependencies,
   and bundle path hints.
-- `tests/` validation for Composer metadata and expected payload layout.
 - `.github/workflows/` CI, changelog, label, review, and project automation.
 
 Keep edits focused on agent content, skill instructions, metadata, or repository
@@ -52,13 +49,12 @@ Use the smallest relevant check while editing:
 
 ```bash
 composer validate --strict
-./vendor/bin/phpunit tests
 ```
 
-Run the global Fast Forward test wrapper before publishing a PR:
+Check changelog discipline on PR branches:
 
 ```bash
-composer dev-tools tests -- --coverage=.dev-tools/coverage --min-coverage=0
+composer dev-tools changelog:check -- --file=CHANGELOG.md --against=origin/main
 ```
 
 If `composer dev-tools` reports auto-fixable formatting or generated-output
@@ -77,12 +73,9 @@ for the installer-paths work tracked in `php-fast-forward/dev-tools#195`. Until
 
 ## Code Style
 
-Keep documentation, agent prompts, skill files, and tests in English. Preserve
-the existing Fast Forward markdown structure and avoid rewriting copied skill
+Keep documentation, agent prompts, and skill files in English. Preserve the
+existing Fast Forward markdown structure and avoid rewriting copied skill
 references unless the standalone package layout requires it.
-
-For PHP test files, keep `declare(strict_types=1);`, the repository header, and
-PHPUnit attributes consistent with other Fast Forward packages.
 
 ## Pull Request Guidelines
 

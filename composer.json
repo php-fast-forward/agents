@@ -41,20 +41,7 @@
         "composer/installers": "^2.3",
         "oomphinc/composer-installers-extender": "^2.0"
     },
-    "require-dev": {
-        "phpunit/phpunit": "^12.5 || ^13.0"
-    },
     "minimum-stability": "stable",
-    "autoload": {
-        "psr-4": {
-            "FastForward\\Agents\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "FastForward\\Agents\\Tests\\": "tests/"
-        }
-    },
     "config": {
         "allow-plugins": {
             "composer/installers": true,
