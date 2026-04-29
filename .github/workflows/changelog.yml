@@ -13,46 +13,24 @@ on:
         required: false
         type: string
         default: CHANGELOG.md
-      base-ref:
-        description: Base branch used for changelog comparison.
+      version:
+        description: Optional version to promote during manual release preparation.
         required: false
         type: string
-        default: main
+        default: ''
 
 permissions:
-  contents: read
+  actions: write
+  contents: write
+  pull-requests: write
+  repository-projects: write
 
 jobs:
   changelog:
-    name: Changelog
-    runs-on: ubuntu-latest
-    env:
-      BASE_REF: ${{ github.event.pull_request.base.ref || inputs.base-ref || github.event.repository.default_branch || 'main' }}
-      CHANGELOG_FILE: ${{ inputs.changelog-file || 'CHANGELOG.md' }}
-      COMPOSER_ROOT_VERSION: ${{ github.event_name == 'pull_request' && format('dev-{0}', github.event.pull_request.head.ref) || 'dev-main' }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.3"
-          coverage: none
-
-      - name: Install global dev-tools
-        run: |
-          composer global config --no-plugins allow-plugins.ergebnis/composer-normalize true
-          composer global config --no-plugins allow-plugins.fast-forward/dev-tools true
-          composer global config --no-plugins allow-plugins.phpdocumentor/shim true
-          composer global config --no-plugins allow-plugins.phpro/grumphp-shim true
-          composer global config --no-plugins allow-plugins.pyrech/composer-changelogs true
-          composer global require fast-forward/dev-tools:dev-main --with-all-dependencies --no-progress --no-interaction
-          composer global config --no-plugins allow-plugins.fast-forward/dev-tools false
-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
-
-      - name: Check changelog
-        run: composer dev-tools changelog:check -- --file="${CHANGELOG_FILE}" --against="origin/${BASE_REF}"
+    uses: php-fast-forward/.github/.github/workflows/changelog.yml@task/2-extract-shared-workflows
+    with:
+      automation-ref: task/2-extract-shared-workflows
+      changelog-file: ${{ inputs.changelog-file || 'CHANGELOG.md' }}
+      dev-tools-version: ^1.0
+      version: ${{ inputs.version || '' }}
+    secrets: inherit

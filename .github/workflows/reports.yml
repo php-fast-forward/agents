@@ -1,16 +1,29 @@
 name: "Fast Forward Reports"
 
 on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - closed
   workflow_dispatch:
+    inputs:
+      cleanup-previews:
+        description: Remove stale pull request previews without publishing production reports.
+        required: false
+        type: boolean
+        default: false
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 
 jobs:
   reports:
-    name: Reports
-    runs-on: ubuntu-latest
-    steps:
-      - name: Reports deferred
-        run: |
-          echo "Report publication is deferred until fast-forward/dev-tools can run its bundled toolchain globally."
+    uses: php-fast-forward/.github/.github/workflows/reports.yml@task/2-extract-shared-workflows
+    with:
+      automation-ref: task/2-extract-shared-workflows
+      cleanup-previews: ${{ github.event_name == 'workflow_dispatch' && inputs.cleanup-previews || false }}
+      dev-tools-version: ^1.0
+    secrets: inherit
