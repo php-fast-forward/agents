@@ -53,7 +53,7 @@ jobs:
           test -d .agents/skills
           test -f .agents/agents/issue-implementer.md
           test -f .agents/skills/github-pull-request/SKILL.md
-          php -r '$composer = json_decode(file_get_contents("composer.json"), true, flags: JSON_THROW_ON_ERROR); if (($composer["type"] ?? null) !== "fast-forward-resource-bundle") { exit(1); } if (($composer["extra"]["installer-name"] ?? null) !== "agents") { exit(1); } if (($composer["extra"]["fast-forward-bundle"]["installer-path"] ?? null) !== ".agents/{\$name}/") { exit(1); }'
+          php -r '$composer = json_decode(file_get_contents("composer.json"), true, flags: JSON_THROW_ON_ERROR); if (($composer["type"] ?? null) !== "fast-forward-resource-bundle") { exit(1); } if (($composer["require"]["fast-forward/composer-installers"] ?? null) !== "dev-main") { exit(1); } if (($composer["extra"]["fast-forward-bundle"]["payload-path"] ?? null) !== ".agents") { exit(1); }'
 
       - name: Publish required test status
         if: ${{ always() && inputs.publish-required-statuses }}

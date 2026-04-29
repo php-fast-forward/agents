@@ -20,31 +20,33 @@ Composer Installation
 ---------------------
 
 Consumer repositories are expected to install Fast Forward resource bundles with
-Composer installer paths:
+``fast-forward/composer-installers``:
 
 .. code-block:: json
 
    {
+     "require": {
+       "fast-forward/agents": "dev-main"
+     },
      "config": {
        "allow-plugins": {
-         "composer/installers": true,
-         "oomphinc/composer-installers-extender": true
+         "fast-forward/composer-installers": true
        }
      },
      "extra": {
-       "installer-types": ["fast-forward-resource-bundle"],
        "installer-paths": {
-         ".agents/{$name}/": ["fast-forward/agents"]
+         ".agents/": ["fast-forward/agents"]
        }
      }
    }
 
-``composer/installers`` is a package dependency of this bundle, so consumers do
-not need to require it separately. The custom ``fast-forward-resource-bundle`` type
-is outside the finite list handled directly by ``composer/installers``, so the
-bundle also requires ``oomphinc/composer-installers-extender``. Consumer roots
-still own the plugin allow-list and the ``installer-types`` /
-``installer-paths`` configuration.
+``fast-forward/composer-installers`` is a package dependency of this bundle, so
+consumers do not need to require the installer separately once the package is
+available from normal Composer metadata. Until the first tagged installer
+release exists, consumer smoke projects can add a repository entry for
+``php-fast-forward/composer-installers`` and install the ``dev-main`` version.
+Consumer roots still own the plugin allow-list and the ``installer-paths``
+configuration.
 
 The resource-bundle type is generic on purpose. Different bundle kinds can still
 install into different target directories by matching explicit package names in
@@ -54,16 +56,18 @@ install into different target directories by matching explicit package names in
 
    {
      "extra": {
-       "installer-types": ["fast-forward-resource-bundle"],
        "installer-paths": {
-         ".agents/{$name}/": ["fast-forward/agents"],
-         ".github/workflows/{$name}/": ["fast-forward/github-workflows"]
+         ".agents/": ["fast-forward/agents"],
+         ".github/workflows/": ["fast-forward/github-workflows"]
        }
      }
    }
 
 This keeps the Composer type reusable while preserving one target directory per
-bundle package or bundle kind.
+bundle package or bundle kind. The installer copies only the declared payload
+contents into each target, so ``fast-forward/agents`` materializes
+``.agents/agents`` and ``.agents/skills`` directly under the consumer
+``.agents/`` directory.
 
 The follow-up ``fast-forward/dev-tools`` work tracked in
 `php-fast-forward/dev-tools#195 <https://github.com/php-fast-forward/dev-tools/issues/195>`_

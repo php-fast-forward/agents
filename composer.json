@@ -26,6 +26,12 @@
         "source": "https://github.com/php-fast-forward/agents",
         "docs": "https://php-fast-forward.github.io/agents/"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/php-fast-forward/composer-installers"
+        }
+    ],
     "funding": [
         {
             "type": "github",
@@ -38,14 +44,13 @@
     ],
     "require": {
         "php": "^8.3",
-        "composer/installers": "^2.3",
-        "oomphinc/composer-installers-extender": "^2.0"
+        "fast-forward/composer-installers": "dev-main"
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "config": {
         "allow-plugins": {
-            "composer/installers": true,
-            "oomphinc/composer-installers-extender": true
+            "fast-forward/composer-installers": true
         },
         "platform": {
             "php": "8.3.0"
@@ -57,15 +62,11 @@
             "dev-main": "1.x-dev"
         },
         "fast-forward-bundle": {
-            "installer-path": ".agents/{$name}/",
-            "installer-path-match": "fast-forward/agents",
-            "installer-type": "fast-forward-resource-bundle",
             "kind": "agents",
             "payload-path": ".agents",
             "project-agents-path": ".agents/agents",
             "skills-path": ".agents/skills"
-        },
-        "installer-name": "agents"
+        }
     },
     "scripts": {
         "dev-tools": "composer global exec dev-tools -- --working-dir=\"$PWD\"",

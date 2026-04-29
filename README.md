@@ -10,30 +10,32 @@ package split tracked by [php-fast-forward/dev-tools#195](https://github.com/php
 
 The package uses the custom Composer type `fast-forward-resource-bundle`.
 Consumer repositories are expected to install Fast Forward resource bundles
-through Composer installer paths instead of copying or linking package contents
-manually.
+through `fast-forward/composer-installers` instead of copying or linking package
+contents manually.
 
 ```json
 {
+  "require": {
+    "fast-forward/agents": "dev-main"
+  },
   "config": {
     "allow-plugins": {
-      "composer/installers": true,
-      "oomphinc/composer-installers-extender": true
+      "fast-forward/composer-installers": true
     }
   },
   "extra": {
-    "installer-types": ["fast-forward-resource-bundle"],
     "installer-paths": {
-      ".agents/{$name}/": ["fast-forward/agents"]
+      ".agents/": ["fast-forward/agents"]
     }
   }
 }
 ```
 
-`composer/installers` is required by this package so consumers do not need to
-require it explicitly. Because `fast-forward-resource-bundle` is a Fast Forward
-package type rather than one of the finite built-in `composer/installers` types,
-this package also requires `oomphinc/composer-installers-extender`.
+`fast-forward/composer-installers` is required by this package so consumers do
+not need to require the installer explicitly once the package is available from
+normal Composer metadata. Until the first tagged installer release exists,
+consumer smoke projects can add a repository entry for
+`php-fast-forward/composer-installers` and install the `dev-main` version.
 
 The resource-bundle type is intentionally generic. Each bundle can still install
 to a different target by using a package-specific installer-path match. For
@@ -43,18 +45,19 @@ could declare:
 ```json
 {
   "extra": {
-    "installer-types": ["fast-forward-resource-bundle"],
     "installer-paths": {
-      ".agents/{$name}/": ["fast-forward/agents"],
-      ".github/workflows/{$name}/": ["fast-forward/github-workflows"]
+      ".agents/": ["fast-forward/agents"],
+      ".github/workflows/": ["fast-forward/github-workflows"]
     }
   }
 }
 ```
 
-Consumer roots still own the plugin allow-list and the `installer-types` /
-`installer-paths` entries because Composer treats those settings as root
-configuration.
+Consumer roots still own the plugin allow-list and the `installer-paths` entries
+because Composer treats those settings as root configuration. The installer
+copies only the declared payload contents into each target, so `fast-forward/agents`
+materializes `.agents/agents` and `.agents/skills` directly under the consumer
+`.agents/` directory.
 
 `fast-forward/dev-tools` will use that stable installed package path in a later
 change so consumer sync commands can resolve packaged agent assets without
