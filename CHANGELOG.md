@@ -10,3 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Bootstrap the initial `fast-forward/agents` package with the packaged Fast Forward project agents, skills, Composer metadata, repository automation, and bundle-shape validation.
+
+### Changed
+
+- Prefix packaged Fast Forward agent files and skill directories with `fast-forward-` to reduce collisions with consumer-owned agents and skills.

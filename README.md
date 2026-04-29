@@ -32,10 +32,9 @@ contents manually.
 ```
 
 `fast-forward/composer-installers` is required by this package so consumers do
-not need to require the installer explicitly once the package is available from
-normal Composer metadata. Until the first tagged installer release exists,
-consumer smoke projects can add a repository entry for
-`php-fast-forward/composer-installers` and install the `dev-main` version.
+not need to require the installer explicitly once both packages are available
+from normal Composer metadata. Local smoke projects may still add repository
+entries when testing unreleased branches.
 
 The resource-bundle type is intentionally generic. Each bundle can still install
 to a different target by using a package-specific installer-path match. For
@@ -65,12 +64,17 @@ assuming they live inside the `dev-tools` archive.
 
 ## Payload
 
-- `.agents/agents/` contains project-agent prompts.
-- `.agents/skills/` contains reusable procedural skills and reference material.
+- `.agents/agents/` contains `fast-forward-*.md` project-agent prompts.
+- `.agents/skills/` contains `fast-forward-*` reusable procedural skills and
+  reference material.
 
 The copied payload is intentionally kept close to the current `dev-tools`
 version. Content changes should stay minimal unless they are required for the
 standalone bundle layout.
+
+Fast Forward-owned files and skill directories use the `fast-forward-` prefix so
+consumer repositories can place local agents or skills beside the packaged
+payload without path collisions.
 
 The Composer metadata in `composer.json` is the package contract. This package
 does not expose a runtime PHP API yet; one can be introduced later when

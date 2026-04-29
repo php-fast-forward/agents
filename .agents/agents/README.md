@@ -5,7 +5,9 @@ Repository-specific agents live in this directory.
 ## Naming Convention
 
 - Use one Markdown file per agent.
-- Name files after the stable agent slug, for example `issue-editor.md`.
+- Prefix packaged Fast Forward agent files with `fast-forward-`, for example
+  `fast-forward-issue-editor.md`.
+- Name files after the stable agent slug.
 - Keep agent names hyphenated so they match references in `AGENTS.md` and GitHub-facing tooling.
 
 ## File Format

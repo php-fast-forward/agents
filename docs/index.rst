@@ -13,8 +13,13 @@ Payload
 
 The package currently contains two payload directories:
 
-- ``.agents/agents`` for role-based project prompts.
-- ``.agents/skills`` for reusable procedural skills and reference material.
+- ``.agents/agents`` for ``fast-forward-*.md`` role-based project prompts.
+- ``.agents/skills`` for ``fast-forward-*`` reusable procedural skills and
+  reference material.
+
+Fast Forward-owned files and skill directories use the ``fast-forward-`` prefix
+so consumer repositories can place local agents or skills beside the packaged
+payload without path collisions.
 
 Composer Installation
 ---------------------
@@ -41,12 +46,10 @@ Consumer repositories are expected to install Fast Forward resource bundles with
    }
 
 ``fast-forward/composer-installers`` is a package dependency of this bundle, so
-consumers do not need to require the installer separately once the package is
-available from normal Composer metadata. Until the first tagged installer
-release exists, consumer smoke projects can add a repository entry for
-``php-fast-forward/composer-installers`` and install the ``dev-main`` version.
-Consumer roots still own the plugin allow-list and the ``installer-paths``
-configuration.
+consumers do not need to require the installer separately once both packages are
+available from normal Composer metadata. Local smoke projects may still add
+repository entries when testing unreleased branches. Consumer roots still own
+the plugin allow-list and the ``installer-paths`` configuration.
 
 The resource-bundle type is generic on purpose. Different bundle kinds can still
 install into different target directories by matching explicit package names in

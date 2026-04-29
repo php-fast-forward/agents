@@ -33,8 +33,9 @@ introduces the shim needed to avoid the package cycle.
 
 Important paths:
 
-- `.agents/agents/` packaged role prompts for repository work.
-- `.agents/skills/` packaged procedural skills and their reference material.
+- `.agents/agents/` packaged `fast-forward-*.md` role prompts for repository work.
+- `.agents/skills/` packaged `fast-forward-*` procedural skills and their
+  reference material.
 - `composer.json` package metadata, custom Composer type, installer dependencies,
   and bundle path hints.
 - `.github/workflows/` CI, changelog, label, review, and project automation.
@@ -66,10 +67,10 @@ composer dev-tools:fix
 
 `fast-forward/dev-tools` is intentionally consumed globally in this root package
 for now. Keep `composer.json` on `type: fast-forward-resource-bundle` and preserve
-the `composer/installers` plus `oomphinc/composer-installers-extender` contract
-for the installer-paths work tracked in `php-fast-forward/dev-tools#195`. Until
-`dev-tools` has a standalone shim for its bundled toolchain, the full
-`composer dev-tools` standards command is not the local gate for this repository.
+the `fast-forward/composer-installers` contract for the installer-paths work
+tracked in `php-fast-forward/dev-tools#195`. Until `dev-tools` has a standalone
+shim for its bundled toolchain, the full `composer dev-tools` standards command
+is not the local gate for this repository.
 
 ## Code Style
 
