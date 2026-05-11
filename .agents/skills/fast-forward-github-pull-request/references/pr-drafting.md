@@ -27,20 +27,6 @@ If no PR template exists, use the fallback structure below.
 
 ## Fallback PR Body
 
-```markdown
-## Summary
-[One short paragraph describing the implemented behavior]
-
-## Changes
-- [Concrete change]
-- [Concrete change]
-
-## Testing
-- [Command and result]
-- [Command and result]
-
-Closes #123
-```
 
 ## Title Guidance
 
