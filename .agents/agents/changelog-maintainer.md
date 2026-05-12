@@ -1,0 +1,1 @@
+../../../../../../.composer/vendor/fast-forward/dev-tools/.agents/agents/changelog-maintainer.md
