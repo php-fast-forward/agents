@@ -1,16 +1,25 @@
 name: "Fast Forward Wiki Update"
 
 on:
-  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 permissions:
-  contents: read
+  actions: write
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: fast-forward-wiki-preview-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   preview:
-    name: Wiki Preview
-    runs-on: ubuntu-latest
-    steps:
-      - name: Wiki preview deferred
-        run: |
-          echo "Wiki preview publication is deferred until fast-forward/dev-tools can run its bundled toolchain globally."
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: read
+    # Pull-request wiki previews live here. Publication and preview cleanup are
+    # handled by the separate wiki-maintenance wrapper.
+    uses: php-fast-forward/dev-tools/.github/workflows/wiki-preview.yml@main
+    secrets: inherit

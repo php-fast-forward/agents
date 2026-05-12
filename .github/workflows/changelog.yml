@@ -2,10 +2,9 @@ name: "Fast Forward Changelog"
 
 on:
   pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
+    types: [opened, reopened, synchronize]
+  pull_request_target:
+    types: [closed]
   workflow_dispatch:
     inputs:
       changelog-file:
@@ -13,46 +12,38 @@ on:
         required: false
         type: string
         default: CHANGELOG.md
-      base-ref:
-        description: Base branch used for changelog comparison.
+      project:
+        description: Optional GitHub Project V2 number used for project-board release transitions.
         required: false
         type: string
-        default: main
+        default: ''
+      version:
+        description: Optional version to promote. Leave empty to infer from Unreleased.
+        required: false
+        type: string
+        default: ''
+      release-branch-prefix:
+        description: Prefix used for release-preparation branches.
+        required: false
+        type: string
+        default: release/v
 
 permissions:
-  contents: read
+  actions: write
+  contents: write
+  pull-requests: write
+  repository-projects: write
 
 jobs:
   changelog:
-    name: Changelog
-    runs-on: ubuntu-latest
-    env:
-      BASE_REF: ${{ github.event.pull_request.base.ref || inputs.base-ref || github.event.repository.default_branch || 'main' }}
-      CHANGELOG_FILE: ${{ inputs.changelog-file || 'CHANGELOG.md' }}
-      COMPOSER_ROOT_VERSION: ${{ github.event_name == 'pull_request' && format('dev-{0}', github.event.pull_request.head.ref) || 'dev-main' }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.3"
-          coverage: none
-
-      - name: Install global dev-tools
-        run: |
-          composer global config --no-plugins allow-plugins.ergebnis/composer-normalize true
-          composer global config --no-plugins allow-plugins.fast-forward/dev-tools true
-          composer global config --no-plugins allow-plugins.phpdocumentor/shim true
-          composer global config --no-plugins allow-plugins.phpro/grumphp-shim true
-          composer global config --no-plugins allow-plugins.pyrech/composer-changelogs true
-          composer global require fast-forward/dev-tools:dev-main --with-all-dependencies --no-progress --no-interaction
-          composer global config --no-plugins allow-plugins.fast-forward/dev-tools false
-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
-
-      - name: Check changelog
-        run: composer dev-tools changelog:check -- --file="${CHANGELOG_FILE}" --against="origin/${BASE_REF}"
+    uses: php-fast-forward/dev-tools/.github/workflows/changelog.yml@main
+    with:
+      changelog-file: ${{ inputs.changelog-file || 'CHANGELOG.md' }}
+      # project: 1
+      #
+      # Consumer repositories SHOULD set this when they want changelog-driven
+      # release transitions to update a specific GitHub Project V2 board.
+      project: ${{ inputs.project || vars.PROJECT || '' }}
+      version: ${{ inputs.version || '' }}
+      release-branch-prefix: ${{ inputs.release-branch-prefix || 'release/v' }}
+    secrets: inherit

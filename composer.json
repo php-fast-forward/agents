@@ -26,12 +26,6 @@
         "source": "https://github.com/php-fast-forward/agents",
         "docs": "https://php-fast-forward.github.io/agents/"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/php-fast-forward/composer-installers"
-        }
-    ],
     "funding": [
         {
             "type": "github",
@@ -68,7 +62,7 @@
         }
     },
     "scripts": {
-        "dev-tools": "composer global exec dev-tools -- --working-dir=\"$PWD\"",
+        "dev-tools": "dev-tools",
         "dev-tools:fix": "@dev-tools --fix"
     }
 }
