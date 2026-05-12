@@ -1,1 +1,0 @@
-../../../../../../.composer/vendor/fast-forward/dev-tools/.agents/agents/quality-pipeline-auditor.md
