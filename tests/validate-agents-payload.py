@@ -81,10 +81,16 @@ def parse_front_matter(path: str) -> dict | None:
         return None
     yaml_block = content[3:end]
     try:
-        return yaml.safe_load(yaml_block) or {}
+        payload = yaml.safe_load(yaml_block)
     except yaml.YAMLError:
         fail("YAML front matter is invalid", path)
         return None
+    if payload is None:
+        return {}
+    if not isinstance(payload, dict):
+        fail("YAML front matter must be a mapping", path)
+        return None
+    return payload
 
 
 def assert_front_matter_field(fm: dict, field: str, context: str) -> None:
@@ -105,6 +111,22 @@ def assert_front_matter_field_exists(fm: dict, field: str, context: str) -> None
         fail(f"Front matter must declare '{field}'", context)
         return
     ok(f"Front matter field '{field}' declared in {context}")
+
+
+def assert_front_matter_field_type(fm: dict, field: str, expected_type: type | tuple[type, ...], context: str, *, allow_empty: bool = False) -> None:
+    if field not in fm:
+        return
+
+    value = fm[field]
+    if not isinstance(value, expected_type):
+        fail(f"Front matter field '{field}' must be {expected_type}", context)
+        return
+
+    if not allow_empty and (value == "" or value == []):
+        fail(f"Front matter field '{field}' must not be empty", context)
+        return
+
+    ok(f"Front matter field '{field}' has expected type in {context}")
 
 
 def assert_markdown_section(path: str, section: str) -> None:
@@ -258,7 +280,9 @@ for filename in NEW_AGENT_FILES:
     assert_front_matter_field(fm, "name", ctx)
     assert_front_matter_field(fm, "description", ctx)
     assert_front_matter_field(fm, "primary-skill", ctx)
+    assert_front_matter_field_type(fm, "primary-skill", str, ctx)
     assert_front_matter_field_exists(fm, "supporting-skills", ctx)
+    assert_front_matter_field_type(fm, "supporting-skills", list, ctx)
 
     # 'name' slug must match the slug derived from the filename.
     expected_slug = re.sub(r"^fast-forward-", "", os.path.splitext(filename)[0])
@@ -508,7 +532,11 @@ for filename in NEW_AGENT_FILES:
         continue
 
     fm = parse_front_matter(path)
-    if fm is None or not isinstance(fm.get("primary-skill"), str):
+    if fm is None:
+        continue
+
+    assert_front_matter_field_type(fm, "primary-skill", str, filename)
+    if not isinstance(fm.get("primary-skill"), str):
         continue
 
     primary = fm["primary-skill"]
@@ -533,6 +561,15 @@ for filename in NEW_AGENT_FILES:
         continue
 
     supporting = fm["supporting-skills"]
+    if not isinstance(supporting, list):
+        fail(f"supporting-skills must be a list", filename)
+        continue
+
+    for idx, slug in enumerate(supporting):
+        if not isinstance(slug, str):
+            fail(f"supporting-skills[{idx}] must be a string", filename)
+            continue
+
     if not supporting:
         ok(f"No supporting-skills declared (empty list OK) in {filename}")
         continue
