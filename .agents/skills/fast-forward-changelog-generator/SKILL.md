@@ -10,106 +10,106 @@ Maintain changelog files for humans first while keeping them deterministic enoug
 ## Workflow
 
 1. Establish current state.
-- Resolve the target file path first. Default to `CHANGELOG.md`, but respect any caller-provided `--file` path.
-- Check whether the changelog file exists.
-- Record whether `Unreleased` already has entries and whether any published releases already exist.
-- If the file does not exist yet, or if Git tags exist that are not documented yet, treat the task as a historical backfill before switching to incremental maintenance.
+    - Resolve the target file path first. Default to `CHANGELOG.md`, but respect any caller-provided `--file` path.
+    - Check whether the changelog file exists.
+    - Record whether `Unreleased` already has entries and whether any published releases already exist.
+    - If the file does not exist yet, or if Git tags exist that are not documented yet, treat the task as a historical backfill before switching to incremental maintenance.
 
 2. Backfill missing release history when needed.
-- If the repository has no changelog, or if some Git tags are still undocumented, walk the Git tags until the changelog is complete.
-- Inspect tags in chronological order so each documented version can be derived from the diff against the previous tag.
-- Treat version ordering as semantic version ordering, never plain string ordering. For example, `1.11.0` MUST sort after `1.10.0`, and `1.10.0` MUST sort after `1.9.0`.
-- Capture the creation date for each tag and use it as the release date recorded in the changelog.
-- For each missing released version:
-  1. compare the previous tag to the current tag;
-  2. record the current tag date;
-  3. extract the notable user-facing, maintainer-facing, or automation-facing changes from that diff;
-  4. resolve any associated pull request numbers from merge commits, squash commit titles, or release history;
-  5. classify them with the standard Keep a Changelog categories;
-  6. add them to the matching released section with `changelog:entry --release=<version> --date=<YYYY-MM-DD>`.
-- Only after all historical tags are represented should new work continue in `Unreleased`.
-- If a tag exists but the diff does not justify a notable entry, keep the release section minimal rather than inventing noise.
+    - If the repository has no changelog, or if some Git tags are still undocumented, walk the Git tags until the changelog is complete.
+    - Inspect tags in chronological order so each documented version can be derived from the diff against the previous tag.
+    - Treat version ordering as semantic version ordering, never plain string ordering. For example, `1.11.0` MUST sort after `1.10.0`, and `1.10.0` MUST sort after `1.9.0`.
+    - Capture the creation date for each tag and use it as the release date recorded in the changelog.
+    - For each missing released version:
+    1. compare the previous tag to the current tag;
+    2. record the current tag date;
+    3. extract the notable user-facing, maintainer-facing, or automation-facing changes from that diff;
+    4. resolve any associated pull request numbers from merge commits, squash commit titles, or release history;
+    5. classify them with the standard Keep a Changelog categories;
+    6. add them to the matching released section with `changelog:entry --release=<version> --date=<YYYY-MM-DD>`.
+    - Only after all historical tags are represented should new work continue in `Unreleased`.
+    - If a tag exists but the diff does not justify a notable entry, keep the release section minimal rather than inventing noise.
 
 3. Choose the right local command.
-- To add one new entry to `Unreleased`:
+    - To add one new entry to `Unreleased`:
 
-```bash
-composer dev-tools changelog:entry -- --type=added "Add example workflow"
-composer dev-tools changelog:entry -- --type=fixed "Fix release note validation"
-```
+    ```bash
+    composer dev-tools changelog:entry -- --type=added "Add example workflow"
+    composer dev-tools changelog:entry -- --type=fixed "Fix release note validation"
+    ```
 
-- To add or amend an entry in a published section:
+    - To add or amend an entry in a published section:
 
-```bash
-composer dev-tools changelog:entry -- --type=changed --release=1.2.0 "Adjust published note"
-composer dev-tools changelog:entry -- --type=fixed --release=1.1.0 --date=2026-04-09 "Correct release metadata handling"
-```
+    ```bash
+    composer dev-tools changelog:entry -- --type=changed --release=1.2.0 "Adjust published note"
+    composer dev-tools changelog:entry -- --type=fixed --release=1.1.0 --date=2026-04-09 "Correct release metadata handling"
+    ```
 
-- To validate that a branch added changelog content:
+    - To validate that a branch added changelog content:
 
-```bash
-composer dev-tools changelog:check
-composer dev-tools changelog:check -- --against=refs/remotes/origin/main
-composer dev-tools changelog:check -- --file=docs/CHANGELOG.md --against=origin/main
-```
+    ```bash
+    composer dev-tools changelog:check
+    composer dev-tools changelog:check -- --against=refs/remotes/origin/main
+    composer dev-tools changelog:check -- --file=docs/CHANGELOG.md --against=origin/main
+    ```
 
-- To infer the next semantic version from `Unreleased`:
+    - To infer the next semantic version from `Unreleased`:
 
-```bash
-composer dev-tools changelog:next-version
-composer dev-tools changelog:next-version -- --file=docs/CHANGELOG.md
-```
+    ```bash
+    composer dev-tools changelog:next-version
+    composer dev-tools changelog:next-version -- --file=docs/CHANGELOG.md
+    ```
 
-- To promote `Unreleased` into a release:
+    - To promote `Unreleased` into a release:
 
-```bash
-composer dev-tools changelog:promote 1.2.0 -- --date=2026-04-19
-composer dev-tools changelog:promote 1.2.0 -- --file=docs/CHANGELOG.md
-```
+    ```bash
+    composer dev-tools changelog:promote 1.2.0 -- --date=2026-04-19
+    composer dev-tools changelog:promote 1.2.0 -- --file=docs/CHANGELOG.md
+    ```
 
-- To export release notes from one published section:
+    - To export release notes from one published section:
 
-```bash
-composer dev-tools changelog:show 1.2.0
-composer dev-tools changelog:show 1.2.0 -- --file=docs/CHANGELOG.md
-```
+    ```bash
+    composer dev-tools changelog:show 1.2.0
+    composer dev-tools changelog:show 1.2.0 -- --file=docs/CHANGELOG.md
+    ```
 
 4. Write human-readable entries.
-- Keep each entry to one line.
-- Prefer the user-visible effect over the implementation detail.
-- Name the concrete surface when that helps: command, option, workflow, configuration, integration, or output.
-- Avoid vague filler such as `misc improvements`, `cleanup`, or `refactorings`.
-- When a change can be tied to a specific pull request, append that PR reference like `(#123)` to the entry.
-- During tag backfill, actively look for PR numbers in merge commits, squash merge titles, or related release metadata before writing the final message.
+    - Keep each entry to one line.
+    - Prefer the user-visible effect over the implementation detail.
+    - Name the concrete surface when that helps: command, option, workflow, configuration, integration, or output.
+    - Avoid vague filler such as `misc improvements`, `cleanup`, or `refactorings`.
+    - When a change can be tied to a specific pull request, append that PR reference like `(#123)` to the entry.
+    - During tag backfill, actively look for PR numbers in merge commits, squash merge titles, or related release metadata before writing the final message.
 
 5. Respect the managed format.
-- Keep `Unreleased` first.
-- Keep released versions in reverse semantic version order unless the repository has an explicit non-semver release policy.
-- Do not use lexical ordering for versions. `1.10.0` and `1.11.0` MUST remain above `1.9.0`, `1.8.0`, and `1.1.0`.
-- Keep section order as:
-  1. `Added`
-  2. `Changed`
-  3. `Deprecated`
-  4. `Removed`
-  5. `Fixed`
-  6. `Security`
-- Omit empty sections.
-- Preserve the official introduction and footer-reference style from Keep a Changelog 1.1.0.
-- Build compare links from the semantically previous published version, not from the previous string-sorted heading.
+    - Keep `Unreleased` first.
+    - Keep released versions in reverse semantic version order unless the repository has an explicit non-semver release policy.
+    - Do not use lexical ordering for versions. `1.10.0` and `1.11.0` MUST remain above `1.9.0`, `1.8.0`, and `1.1.0`.
+    - Keep section order as:
+    1. `Added`
+    2. `Changed`
+    3. `Deprecated`
+    4. `Removed`
+    5. `Fixed`
+    6. `Security`
+    - Omit empty sections.
+    - Preserve the official introduction and footer-reference style from Keep a Changelog 1.1.0.
+    - Build compare links from the semantically previous published version, not from the previous string-sorted heading.
 
 6. Verify the result.
-- For branch validation, prefer running:
+    - For branch validation, prefer running:
 
-```bash
-composer dev-tools changelog:check -- --against=refs/remotes/origin/main
-```
+    ```bash
+    composer dev-tools changelog:check -- --against=refs/remotes/origin/main
+    ```
 
-- For release preparation, also inspect:
+    - For release preparation, also inspect:
 
-```bash
-composer dev-tools changelog:next-version
-composer dev-tools changelog:show -- <version>
-```
+    ```bash
+    composer dev-tools changelog:next-version
+    composer dev-tools changelog:show -- <version>
+    ```
 
 ## Output Contract
 
