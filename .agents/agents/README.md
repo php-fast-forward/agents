@@ -1,0 +1,31 @@
+# Project Agents
+
+Repository-specific agents live in this directory.
+
+## Naming Convention
+
+- Use one Markdown file per agent.
+- Prefix packaged Fast Forward agent files with `fast-forward-`, for example
+  `fast-forward-issue-editor.md`.
+- Name files after the stable agent slug.
+- Keep agent names hyphenated so they match references in `AGENTS.md` and GitHub-facing tooling.
+
+## File Format
+
+Each agent file uses:
+
+1. a small YAML front matter block with the agent `name`, a short `description`,
+   the `primary-skill`, and optional `supporting-skills`;
+2. a Markdown body with these sections:
+   - `Purpose`
+   - `Responsibilities`
+   - `Use When`
+   - `Boundaries`
+   - `Primary Skill`
+   - `Supporting Skills`
+
+## Scope
+
+These prompts are packaged for Fast Forward repositories. They define durable
+role behavior and delegation boundaries that can be reused in consumer
+repositories, while `.agents/skills` remains the procedural source of truth.

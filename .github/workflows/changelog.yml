@@ -1,0 +1,49 @@
+name: "Fast Forward Changelog"
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  pull_request_target:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      changelog-file:
+        description: Path to the managed changelog file.
+        required: false
+        type: string
+        default: CHANGELOG.md
+      project:
+        description: Optional GitHub Project V2 number used for project-board release transitions.
+        required: false
+        type: string
+        default: ''
+      version:
+        description: Optional version to promote. Leave empty to infer from Unreleased.
+        required: false
+        type: string
+        default: ''
+      release-branch-prefix:
+        description: Prefix used for release-preparation branches.
+        required: false
+        type: string
+        default: release/v
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+  repository-projects: write
+
+jobs:
+  changelog:
+    uses: php-fast-forward/dev-tools/.github/workflows/changelog.yml@main
+    with:
+      changelog-file: ${{ inputs.changelog-file || 'CHANGELOG.md' }}
+      # project: 1
+      #
+      # Consumer repositories SHOULD set this when they want changelog-driven
+      # release transitions to update a specific GitHub Project V2 board.
+      project: ${{ inputs.project || vars.PROJECT || '' }}
+      version: ${{ inputs.version || '' }}
+      release-branch-prefix: ${{ inputs.release-branch-prefix || 'release/v' }}
+    secrets: inherit

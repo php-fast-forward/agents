@@ -1,0 +1,68 @@
+{
+    "name": "fast-forward/agents",
+    "description": "Packaged Fast Forward agents and skills for consumer repositories.",
+    "license": "MIT",
+    "type": "fast-forward-resource-bundle",
+    "keywords": [
+        "agents",
+        "developer-tools",
+        "fast-forward",
+        "php",
+        "skills"
+    ],
+    "readme": "README.md",
+    "authors": [
+        {
+            "name": "Felipe Sayao Lobato Abreu",
+            "email": "github@mentordosnerds.com",
+            "homepage": "https://github.com/coisa",
+            "role": "Maintainer"
+        }
+    ],
+    "homepage": "https://github.com/php-fast-forward/agents",
+    "support": {
+        "issues": "https://github.com/php-fast-forward/agents/issues",
+        "wiki": "https://github.com/php-fast-forward/agents/wiki",
+        "source": "https://github.com/php-fast-forward/agents",
+        "docs": "https://php-fast-forward.github.io/agents/"
+    },
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/php-fast-forward"
+        },
+        {
+            "type": "custom",
+            "url": "https://www.paypal.com/donate/?business=JLDAF45XZ8D84"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "fast-forward/composer-installers": "^0.1"
+    },
+    "minimum-stability": "stable",
+    "config": {
+        "allow-plugins": {
+            "fast-forward/composer-installers": true
+        },
+        "platform": {
+            "php": "8.3.0"
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.x-dev"
+        },
+        "fast-forward-bundle": {
+            "kind": "agents",
+            "payload-path": ".agents",
+            "project-agents-path": ".agents/agents",
+            "skills-path": ".agents/skills"
+        }
+    },
+    "scripts": {
+        "dev-tools": "dev-tools",
+        "dev-tools:fix": "@dev-tools --fix"
+    }
+}

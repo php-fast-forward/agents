@@ -1,0 +1,15 @@
+name: Label sync
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+  issues:
+    types: [opened, reopened]
+
+jobs:
+  label-sync:
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: write
+    uses: php-fast-forward/dev-tools/.github/workflows/label-sync.yml@main
