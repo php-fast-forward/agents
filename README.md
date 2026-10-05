@@ -1,6 +1,6 @@
 # agents
 
 <p align="center">
-  <img src="assets/brand/dash.png" alt="Dash, the PHP Fast Forward fox, wearing a purple hoodie" width="320">
+  <img src="docs/_static/mascot-banner.png" alt="Dash organizing specialized agent roles and instruction resources" width="840">
 </p>
 Fast Forward packaged agent assets
